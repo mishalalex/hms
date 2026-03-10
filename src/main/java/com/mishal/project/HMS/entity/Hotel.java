@@ -38,6 +38,9 @@ public class Hotel {
     @Column(columnDefinition = "TEXT[]")
     private List<String> amenities;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User owner;
+
     @CreationTimestamp
     private LocalDateTime created_at;
 
