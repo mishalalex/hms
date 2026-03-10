@@ -17,16 +17,17 @@ public class HotelController {
 
     @PostMapping
     public ResponseEntity<HotelDto> createNewHotel(@RequestBody HotelDto hotelDto) {
-        log.info("Attempting to create new hotel with name: {}", hotelDto.getName());
+        log.info("Processing the request to create new hotel with name: {}", hotelDto.getName());
         HotelDto hotelFromRepository = hotelService.createNewHotel(hotelDto);
-        log.info("Created new hotel with name: {}", hotelDto.getName());
+        log.info("Successfully created new hotel with name: {}", hotelDto.getName());
         return new ResponseEntity<>(hotelFromRepository, HttpStatus.CREATED);
     }
 
     @GetMapping("/{hotelId}")
     public ResponseEntity<HotelDto> getHotelById(@PathVariable Long hotelId) {
-        log.info("Attempting to get hotel with id: {}", hotelId);
+        log.info("Processing to retrieve a hotel with id: {}", hotelId);
         HotelDto hotelFromRepository = hotelService.getHotelById(hotelId);
+        log.info("Successfully retrieved hotel with id: {}", hotelId);
         return new ResponseEntity<>(hotelFromRepository, HttpStatus.OK);
     }
 }

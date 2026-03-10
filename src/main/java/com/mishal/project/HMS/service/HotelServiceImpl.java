@@ -28,7 +28,7 @@ public class HotelServiceImpl implements HotelService {
 
     @Override
     public HotelDto getHotelById(Long id) {
-        log.info("Getting hotel with id {}", id);
+        log.info("Getting hotel with id {} from database", id);
         Hotel hotel = hotelRepository
                 .findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Hotel not found by id: {}" + id));
