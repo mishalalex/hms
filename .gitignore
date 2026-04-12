@@ -35,3 +35,6 @@ build/
 ### MVN files
 mvnw
 mvnw.cmd
+
+### Agents.MD file
+AGENTS.md
