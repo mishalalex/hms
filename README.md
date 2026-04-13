@@ -25,10 +25,14 @@ In scope right now:
 - persistence with PostgreSQL
 - exception handling and response standardization
 
+In progress:
+
+- browse: paginated API to search & GET all rooms in a hotel
+- booking flows : initiate booking, adding guests, and reach till payments flow
+- guest management
+
 Planned later:
 
-- booking flows
-- guest management
 - payment flows
 - user and role based features
 - broader Airbnb-like business workflows
