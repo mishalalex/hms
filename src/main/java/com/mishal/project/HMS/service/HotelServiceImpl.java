@@ -6,11 +6,11 @@ import com.mishal.project.HMS.entity.Room;
 import com.mishal.project.HMS.exception.HotelAlreadyActiveException;
 import com.mishal.project.HMS.exception.ResourceNotFoundException;
 import com.mishal.project.HMS.repository.HotelRepository;
+import com.mishal.project.HMS.repository.RoomRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,6 +23,7 @@ public class HotelServiceImpl implements HotelService {
     private final ModelMapper modelMapper;
     private final InventoryService inventoryService;
     private final HotelRepository hotelRepository;
+    private final RoomRepository roomRepository;
 
 
     @Override
@@ -42,7 +43,7 @@ public class HotelServiceImpl implements HotelService {
         Hotel hotel = hotelRepository
                 .findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Hotel not found by id: " + id));
-        if(hotel.getActive()) throw new HotelAlreadyActiveException("The hotel is already activated!");
+        if(hotel.getActive()) throw new HotelAlreadyActiveException("The hotel is already activated");
         hotel.setActive(true);
         for(Room room: hotel.getRooms()){
             inventoryService.initializeRoomForOneYear(room);
@@ -75,18 +76,19 @@ public class HotelServiceImpl implements HotelService {
     }
 
     @Override
-    @Transactional
+    @Transactional // if some part of this operation fails, the whole operation will be rolled back
     public Boolean deleteHotelById(Long id){
         log.info("Attempting to delete hotel with id {} from database", id);
         Hotel hotel = hotelRepository
                 .findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Hotel not found by id: " + id));
         for(Room room: hotel.getRooms()) {
-            inventoryService.deleteFutureInventories(room);
+            inventoryService.deleteAllInventories(room);
+            roomRepository.deleteById(room.getId());
         }
         hotelRepository.deleteById(id);
 
-        log.info("Hotel with id {} has been deleted", id);
+        log.info("Hotel with id {} has been deleted along with all it's inventory", id);
         return true;
     }
 

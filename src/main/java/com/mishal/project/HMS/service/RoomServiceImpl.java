@@ -5,7 +5,6 @@ import com.mishal.project.HMS.entity.Hotel;
 import com.mishal.project.HMS.entity.Room;
 import com.mishal.project.HMS.exception.ResourceNotFoundException;
 import com.mishal.project.HMS.repository.HotelRepository;
-import com.mishal.project.HMS.repository.InventoryRepository;
 import com.mishal.project.HMS.repository.RoomRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -68,8 +67,7 @@ public class RoomServiceImpl implements RoomService{
         Room room = roomRepository
                 .findById(roomId)
                 .orElseThrow(() -> new ResourceNotFoundException("Room not found with id: " + roomId));
-        inventoryService.deleteFutureInventories(room);
-        // TODO : fix the issue here because it tries to delete future inventory only
+        inventoryService.deleteAllInventories(room);
         roomRepository.deleteById(roomId);
     }
 }
