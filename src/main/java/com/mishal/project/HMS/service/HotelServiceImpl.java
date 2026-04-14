@@ -1,6 +1,8 @@
 package com.mishal.project.HMS.service;
 
 import com.mishal.project.HMS.dto.HotelDto;
+import com.mishal.project.HMS.dto.HotelInfoDto;
+import com.mishal.project.HMS.dto.RoomDto;
 import com.mishal.project.HMS.entity.Hotel;
 import com.mishal.project.HMS.entity.Room;
 import com.mishal.project.HMS.exception.HotelAlreadyActiveException;
@@ -94,11 +96,27 @@ public class HotelServiceImpl implements HotelService {
 
     @Override
     public List<HotelDto> getAllHotels() {
+        log.info("Attempting to retrieve all hotels from database");
         List<HotelDto> allHotels = hotelRepository
                 .findAll()
                 .stream()
                 .map((element) -> modelMapper.map(element, HotelDto.class))
                 .collect(Collectors.toList());
         return allHotels;
+    }
+
+    @Override
+    public HotelInfoDto getHotelDetailsById(Long id) {
+        Hotel hotel = hotelRepository
+                .findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Hotel not found with id: " + id));
+
+        List<RoomDto> rooms = hotel
+                .getRooms()
+                .stream()
+                .map(room -> modelMapper.map(room, RoomDto.class))
+                .toList();
+
+        return new HotelInfoDto(modelMapper.map(hotel, HotelDto.class), rooms);
     }
 }
