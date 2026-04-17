@@ -21,7 +21,7 @@ import java.time.temporal.ChronoUnit;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class InventoryImpl implements InventoryService{
+public class InventoryServiceImpl implements InventoryService{
 
     private final InventoryRepository inventoryRepository;
     private final ModelMapper modelMapper;
@@ -36,6 +36,7 @@ public class InventoryImpl implements InventoryService{
                     .hotel(room.getHotel())
                     .room(room)
                     .bookedCount(0)
+                    .reservedCount(0)
                     .city(room.getHotel().getCity())
                     .date(today)
                     .price(room.getBasePrice())
