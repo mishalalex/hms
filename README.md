@@ -24,11 +24,11 @@ In scope right now:
 - inventory initialization logic
 - persistence with PostgreSQL
 - exception handling and response standardization
+- browse: paginated API to search & GET all rooms in a hotel
+- booking flows : initiate booking, adding guests, and reach till payments flow
 
 In progress:
 
-- browse: paginated API to search & GET all rooms in a hotel
-- booking flows : initiate booking, adding guests, and reach till payments flow
 - guest management
 
 Planned later:
