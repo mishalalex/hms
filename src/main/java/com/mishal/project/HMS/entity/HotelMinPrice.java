@@ -1,46 +1,34 @@
 package com.mishal.project.HMS.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Getter
 @Setter
-@Table(name = "room")
-public class Room {
+@NoArgsConstructor
+public class HotelMinPrice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "hotel_id", nullable = false)
+    @JoinColumn(nullable = false, name = "hotel_id")
     private Hotel hotel;
 
     @Column(nullable = false)
-    private String type;
+    private LocalDate date;
 
-    @Column(precision = 10, scale = 2, nullable = false)
-    private BigDecimal basePrice;
-
-    @Column(nullable = false)
-    private Integer totalCount;
-
-    @Column(nullable = false)
-    private Integer capacity;
-
-    @Column(columnDefinition = "TEXT[]")
-    private List<String> photos;
-
-    @Column(columnDefinition = "TEXT[]")
-    private List<String> amenities;
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal price; // min price = cheapest room price on particular date
 
     @CreationTimestamp
     private LocalDateTime created_at;
@@ -48,4 +36,8 @@ public class Room {
     @UpdateTimestamp
     private LocalDateTime updated_at;
 
+    public HotelMinPrice(Hotel hotel, LocalDate date) {
+        this.hotel = hotel;
+        this.date = date;
+    }
 }

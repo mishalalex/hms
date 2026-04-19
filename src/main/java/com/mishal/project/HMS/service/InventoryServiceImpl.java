@@ -1,10 +1,11 @@
 package com.mishal.project.HMS.service;
 
-import com.mishal.project.HMS.dto.HotelDto;
+import com.mishal.project.HMS.dto.HotelPriceDto;
 import com.mishal.project.HMS.dto.HotelSearchRequestDto;
 import com.mishal.project.HMS.entity.Hotel;
 import com.mishal.project.HMS.entity.Inventory;
 import com.mishal.project.HMS.entity.Room;
+import com.mishal.project.HMS.repository.HotelMinPriceRepository;
 import com.mishal.project.HMS.repository.InventoryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,7 @@ import java.time.temporal.ChronoUnit;
 public class InventoryServiceImpl implements InventoryService{
 
     private final InventoryRepository inventoryRepository;
+    private final HotelMinPriceRepository hotelMinPriceRepository;
     private final ModelMapper modelMapper;
 
     @Override
@@ -55,19 +57,30 @@ public class InventoryServiceImpl implements InventoryService{
     }
 
     @Override
-    public Page<HotelDto> searchHotels(HotelSearchRequestDto hotelSearchRequestDto) {
-        long dateCount = ChronoUnit.DAYS.between(hotelSearchRequestDto.getStartDate(), hotelSearchRequestDto.getEndDate()) + 1;
+    public Page<HotelPriceDto> searchHotels(HotelSearchRequestDto hotelSearchRequestDto) {
+        log.info("Attempting to search hotels from {} to {}", hotelSearchRequestDto.getStartDate(), hotelSearchRequestDto.getEndDate());
 
+        long dateCount = ChronoUnit.DAYS.between(hotelSearchRequestDto.getStartDate(), hotelSearchRequestDto.getEndDate()) + 1;
         Pageable pageable = PageRequest.of(
                 hotelSearchRequestDto.getPage(),
                 hotelSearchRequestDto.getSize());
 
-        Page<Hotel> hotelPage = inventoryRepository.findHotelsWithAvailableInventory(
+        if(dateCount > 90) {
+            // note - price is not returned here (which will be worked upon later)
+            Page<Hotel> hotelPage = inventoryRepository.findHotelsWithAvailableInventory(
+                    hotelSearchRequestDto.getCity(),
+                    hotelSearchRequestDto.getStartDate(),
+                    hotelSearchRequestDto.getEndDate(),
+                    hotelSearchRequestDto.getRoomsCount(),
+                    dateCount,
+                    pageable);
+            return hotelPage.map(element -> modelMapper.map(element,HotelPriceDto.class));
+        }
+        return hotelMinPriceRepository.findByHotelsWithAvailableInventory(
                 hotelSearchRequestDto.getCity(),
                 hotelSearchRequestDto.getStartDate(),
                 hotelSearchRequestDto.getEndDate(),
-                hotelSearchRequestDto.getRoomsCount(),
-                dateCount, pageable);
-        return hotelPage.map(element -> modelMapper.map(element,HotelDto.class));
+                pageable
+        );
     }
 }
