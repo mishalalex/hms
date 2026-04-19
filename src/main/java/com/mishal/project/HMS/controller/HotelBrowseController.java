@@ -2,6 +2,7 @@ package com.mishal.project.HMS.controller;
 
 import com.mishal.project.HMS.dto.HotelDto;
 import com.mishal.project.HMS.dto.HotelInfoDto;
+import com.mishal.project.HMS.dto.HotelPriceDto;
 import com.mishal.project.HMS.dto.HotelSearchRequestDto;
 import com.mishal.project.HMS.service.HotelService;
 import com.mishal.project.HMS.service.InventoryService;
@@ -20,9 +21,9 @@ public class HotelBrowseController {
     private final HotelService hotelService;
 
     @PostMapping("/search")
-    public ResponseEntity<Page<HotelDto>> searchHotels(@RequestBody HotelSearchRequestDto hotelSearchRequestDto) {
+    public ResponseEntity<Page<HotelPriceDto>> searchHotels(@RequestBody HotelSearchRequestDto hotelSearchRequestDto) {
 
-        Page<HotelDto> page = inventoryService.searchHotels(hotelSearchRequestDto);
+        Page<HotelPriceDto> page = inventoryService.searchHotels(hotelSearchRequestDto);
         return new ResponseEntity<>(page, HttpStatus.OK);
     }
 
